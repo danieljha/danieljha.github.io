@@ -181,3 +181,8 @@
 .letterboxd .all a:hover {
   color: #fff;
 }
+
+/* shown only in the RSS feed; the site shows the site-only version instead */
+.feed-only {
+  display: none;
+}

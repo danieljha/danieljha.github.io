@@ -108,3 +108,9 @@ test("feed html strips scripts", () => {
     /script/,
   );
 });
+
+test("site-only content is left out of the feed", () => {
+  const html = '<div class="gallery site-only"><img src="/a.webp" alt="plakat"></div><div class="feed-only"><p>tekst</p></div>';
+  assert.equal(toFeedHtml(html, SITE), "<div><p>tekst</p></div>");
+  assert.equal(toFeedText(html), "tekst");
+});

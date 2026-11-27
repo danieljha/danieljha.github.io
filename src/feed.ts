@@ -1,5 +1,5 @@
 import sanitizeHtml from "sanitize-html";
-import { parseDocument } from "htmlparser2";
+import { DomUtils, parseDocument } from "htmlparser2";
 
 type Attributes = Record<string, string>;
 
@@ -57,8 +57,20 @@ const toAbsolute = (value: string, site: URL | string) => {
   }
 };
 
+// elements with class="site-only" are left out of the feed (and class="feed-only" is hidden on the site, see global.css)
+export const dropSiteOnly = (html: string) => {
+  if (!html.includes("site-only")) return html;
+  const doc = parseDocument(html);
+  const siteOnly = DomUtils.findAll(
+    (el) => (el.attribs.class ?? "").split(/\s+/).includes("site-only"),
+    doc.children,
+  );
+  for (const el of siteOnly) DomUtils.removeElement(el);
+  return DomUtils.getOuterHTML(doc);
+};
+
 export const toFeedHtml = (html: string, site: URL | string) =>
-  sanitizeHtml(html, {
+  sanitizeHtml(dropSiteOnly(html), {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
@@ -111,6 +123,6 @@ const truncate = (text: string, maxLength: number) => {
 
 export const toFeedText = (html: string, maxLength = DESCRIPTION_MAX_LENGTH) => {
   const parts: string[] = [];
-  collectText(parseDocument(html), parts);
+  collectText(parseDocument(dropSiteOnly(html)), parts);
   return truncate(parts.join("").replace(/\s+/g, " ").trim(), maxLength);
 };

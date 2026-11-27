@@ -1,0 +1,124 @@
+---
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Bungee&display=swap"
+  rel="stylesheet"
+/>
+
+<div class="fire-banner">
+  <!-- SVG filter that makes the edges of the flames waver -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <filter id="flame" x="-20%" y="-60%" width="140%" height="180%">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.012 0.05"
+        numOctaves="2"
+        seed="3"
+        result="noise"
+      >
+        <animate
+          attributeName="baseFrequency"
+          dur="6s"
+          values="0.012 0.05;0.016 0.08;0.012 0.05"
+          repeatCount="indefinite"></animate>
+      </feTurbulence>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="noise"
+        scale="9"
+        xChannelSelector="R"
+        yChannelSelector="G"></feDisplacementMap>
+    </filter>
+  </svg>
+
+  <h1 class="fire">{text}</h1>
+</div>
+
+<style>
+  .fire-banner {
+    display: grid;
+    place-items: center;
+    padding: 4.5rem 1rem 2rem;
+    margin-bottom: 1rem;
+    background: var(--color-ink);
+    overflow: hidden;
+  }
+
+  .fire {
+    margin: 0;
+    text-align: center;
+    font-family: "Bungee", Impact, "Arial Black", sans-serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 8vw, 4.5rem);
+    line-height: 1.1;
+    color: #fff6d0;
+    /* Layered shadows rise upward from the letters like flames */
+    text-shadow:
+      0 0 4px #fff,
+      0 -2px 8px #ffe66b,
+      0 -6px 14px #ffb300,
+      0 -12px 22px #ff7a00,
+      0 -20px 34px #ff3d00,
+      0 -30px 50px #c41200,
+      0 -42px 70px #6e0600;
+    filter: url(#flame);
+    animation: flicker 1.6s ease-in-out infinite alternate;
+  }
+
+  @keyframes flicker {
+    0% {
+      text-shadow:
+        0 0 4px #fff,
+        0 -2px 8px #ffe66b,
+        0 -6px 14px #ffb300,
+        0 -12px 22px #ff7a00,
+        0 -20px 34px #ff3d00,
+        0 -30px 50px #c41200,
+        0 -42px 70px #6e0600;
+    }
+    35% {
+      text-shadow:
+        0 0 5px #fff,
+        0 -3px 10px #ffe66b,
+        0 -9px 16px #ffb300,
+        0 -16px 26px #ff7a00,
+        0 -26px 40px #ff3d00,
+        0 -38px 58px #c41200,
+        0 -52px 84px #6e0600;
+    }
+    70% {
+      text-shadow:
+        0 0 3px #fff,
+        0 -2px 7px #ffe66b,
+        0 -5px 12px #ffb300,
+        0 -10px 20px #ff7a00,
+        0 -17px 30px #ff3d00,
+        0 -26px 44px #c41200,
+        0 -36px 62px #6e0600;
+    }
+    100% {
+      text-shadow:
+        0 0 5px #fff,
+        0 -4px 10px #ffe66b,
+        0 -8px 18px #ffb300,
+        0 -15px 28px #ff7a00,
+        0 -24px 42px #ff3d00,
+        0 -34px 60px #c41200,
+        0 -48px 80px #6e0600;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fire {
+      animation: none;
+      filter: none;
+    }
+  }
+</style>
